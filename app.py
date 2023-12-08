@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, send_file
 from bark import SAMPLE_RATE, generate_audio, preload_models
 from scipy.io.wavfile import write as write_wav
 from io import BytesIO
+import os
 
 app = Flask(__name__)
-
 
 def get_video_memory():
     try:
@@ -14,29 +14,59 @@ def get_video_memory():
     except ImportError:
         return "GPUtil module not found. Please install it to get GPU information."
 
+def get_last_count():
+    try:
+        with open('count.txt', 'r') as file:
+            return int(file.read().strip())
+    except FileNotFoundError:
+        return 0
+
+def update_last_count(count):
+    with open('count.txt', 'w') as file:
+        file.write(str(count))
 
 # download and load all models
-print(get_video_memory());
 preload_models()
-print(get_video_memory());
+
+last_count = get_last_count()
+print(f"Last count: {last_count}")
+
 @app.route('/')
 def index():
-    print(get_video_memory());
+    print(get_video_memory())
     return render_template('index.html')
 
 @app.route('/generate_audio', methods=['POST'])
 def generate_audio_endpoint():
     text_prompt = request.form['text_prompt']
 
+    # Debugging video memory before generating audio
+    print(get_video_memory())
+
     # generate audio from text
     audio_array = generate_audio(text_prompt, history_prompt="v2/en_speaker_9")
 
-    # save audio to memory buffer
+    # Debugging video memory after generating audio
+    print(get_video_memory())
+
+    # Increment the count
+    last_count = get_last_count()
+    current_count = last_count + 1
+
+    # save audio to memory buffer with incremented count
     audio_buffer = BytesIO()
     write_wav(audio_buffer, SAMPLE_RATE, audio_array)
     audio_buffer.seek(0)
 
-    return send_file(audio_buffer, mimetype="audio/wav", as_attachment=True, download_name="generated_audio.wav")
+    # Save the audio file with an incremented count
+    audio_filename = f"audio_{current_count}.wav"
+    with open(audio_filename, 'wb') as audio_file:
+        audio_file.write(audio_buffer.read())
+
+    # Update the last count
+    update_last_count(current_count)
+
+    return send_file(audio_filename, mimetype="audio/wav", as_attachment=True, download_name=audio_filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
