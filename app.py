@@ -3,6 +3,7 @@ from bark import SAMPLE_RATE, generate_audio, preload_models
 from scipy.io.wavfile import write as write_wav
 from io import BytesIO
 import os
+import argparse
 
 app = Flask(__name__)
 
@@ -25,8 +26,22 @@ def update_last_count(count):
     with open('count.txt', 'w') as file:
         file.write(str(count))
 
-# download and load all models
-preload_models()
+def preload_bark_models():
+    print("Preloading Bark models...")
+    preload_models()
+    print("Bark models preloaded.")
+
+def parse_command_line_args():
+    parser = argparse.ArgumentParser(description="Flask Text-to-Speech Web Application")
+    parser.add_argument('--debug', action='store_true', help='Run in debug mode without preloading Bark models')
+    return parser.parse_args()
+
+# Parse command-line arguments
+args = parse_command_line_args()
+
+# download and load all models if not in debug mode
+if not args.debug:
+    preload_bark_models()
 
 last_count = get_last_count()
 print(f"Last count: {last_count}")
