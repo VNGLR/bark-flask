@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from bark import SAMPLE_RATE, generate_audio, preload_models
 from scipy.io.wavfile import write as write_wav
 from io import BytesIO
 import os
 import argparse
-from flask import jsonify
+import hashlib
 
 app = Flask(__name__)
 
@@ -32,9 +32,19 @@ def preload_bark_models():
     preload_models()
     print("Bark models preloaded.")
 
+def calculate_md5(data):
+    md5 = hashlib.md5()
+    md5.update(data)
+    return md5.hexdigest()
+
+def log_text_and_hash(text, hash_value):
+    with open('text_and_hash.txt', 'a') as log_file:
+        log_file.write(f"{text} - {hash_value}\n")
+
 def parse_command_line_args():
     parser = argparse.ArgumentParser(description="Flask Text-to-Speech Web Application")
     parser.add_argument('--debug', action='store_true', help='Run in debug mode without preloading Bark models')
+    parser.add_argument('-c', '--cache', action='store_true', help='Enable MD5 hash caching')
     return parser.parse_args()
 
 # Parse command-line arguments
@@ -87,6 +97,10 @@ def generate_audio_endpoint():
 
     # Update the last count
     update_last_count(current_count)
+
+    if args.cache:
+        md5_hash = calculate_md5(audio_buffer.getvalue())
+        log_text_and_hash(text_prompt, md5_hash)
 
     return send_file(audio_filename, mimetype="audio/wav", as_attachment=True, download_name=audio_filename)
 
