@@ -68,15 +68,25 @@ def get_video_memory_endpoint():
     video_memory = get_video_memory()
     return jsonify({'video_memory': video_memory})
 
+
+@app.route('/get_history_prompt_options')
+def get_history_prompt_options():
+    history_prompt_options = [f"v2/en_speaker_{i}" for i in range(10)]
+    return jsonify({'history_prompt_options': history_prompt_options})
+
 @app.route('/generate_audio', methods=['POST'])
 def generate_audio_endpoint():
     text_prompt = request.form['text_prompt']
+    
+    #defaults to v2/en_speaker_9, otherwise reads from selected in get_history_prompt_options
+    speaker = request.form.get('history_prompt', 'v2/en_speaker_9')
 
     # Debugging video memory before generating audio
     print(get_video_memory())
+    print(speaker);
 
     # generate audio from text
-    audio_array = generate_audio(text_prompt, history_prompt="v2/en_speaker_9")
+    audio_array = generate_audio(text_prompt,history_prompt=speaker)
 
     # Debugging video memory after generating audio
     print(get_video_memory())
