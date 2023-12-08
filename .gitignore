@@ -1,0 +1,4 @@
+# .gitignore
+
+count.txt
+audio_*.wav

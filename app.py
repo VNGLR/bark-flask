@@ -4,6 +4,7 @@ from scipy.io.wavfile import write as write_wav
 from io import BytesIO
 import os
 import argparse
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -49,7 +50,13 @@ print(f"Last count: {last_count}")
 @app.route('/')
 def index():
     print(get_video_memory())
-    return render_template('index.html')
+    video_memory = get_video_memory()
+    return render_template('index.html', video_memory=video_memory)
+
+@app.route('/get_video_memory')
+def get_video_memory_endpoint():
+    video_memory = get_video_memory()
+    return jsonify({'video_memory': video_memory})
 
 @app.route('/generate_audio', methods=['POST'])
 def generate_audio_endpoint():
