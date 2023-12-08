@@ -14,27 +14,16 @@ This Flask web application converts text to audio using the [Bark](https://githu
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/yourusername/your-tts-app.git
+   git clone https://github.com/VNGLR/bark-flask.git
    cd your-tts-app
 
     Install dependencies:
 
     bash
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
-Download and preload Bark models:
-
-bash
-
-python preload_models.py
-
-Note: If you want to run the application in debug mode without preloading models, use the --debug flag when starting the Flask application:
-
-bash
-
-    python app.py --debug
+    python app.py
 
 ## Usage
 
@@ -101,9 +90,8 @@ test again - 5bea173b48ca3b4a00e97554ded78a30
 
 These enhancements are controlled by command-line arguments:
 
-- `-c` or `--cache`: Enables MD5 hash caching.
-
-To run the Flask application with caching enabled, use the following command:
+- `-c` or `--cache`: Enables MD5 hash caching. 
+--debug:  Run in debug mode without preloading Bark models, cache will be loaded upon first use
 
 Customization
 
