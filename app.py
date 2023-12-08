@@ -77,6 +77,8 @@ def get_history_prompt_options():
 @app.route('/generate_audio', methods=['POST'])
 def generate_audio_endpoint():
     text_prompt = request.form['text_prompt']
+    
+    #defaults to v2/en_speaker_9, otherwise reads from selected in get_history_prompt_options
     speaker = request.form.get('history_prompt', 'v2/en_speaker_9')
 
     # Debugging video memory before generating audio
