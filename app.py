@@ -114,5 +114,10 @@ def generate_audio_endpoint():
 
     return send_file(audio_filename, mimetype="audio/wav", as_attachment=True, download_name=audio_filename)
 
+@app.route('/fetch_count')
+def fetch_count():
+    current_count = get_last_count()
+    return jsonify({'current_count': current_count})
+
 if __name__ == '__main__':
     app.run(debug=True)

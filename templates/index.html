@@ -8,13 +8,11 @@
     <title>Text to Audio Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<!-- templates/index.html -->
-
-<!-- ... (previous code) -->
 
 <body>
     <h1>Text to Audio Generator</h1>
     <p id="video-memory">Video Memory: Loading...</p>
+    <p id="current-count">Current Count: Loading...</p>
     <form action="/generate_audio" method="post">
         <label for="text_prompt">Enter Text:</label>
         <textarea name="text_prompt" id="text_prompt" rows="4" cols="50"></textarea>
@@ -24,6 +22,9 @@
         <br>
         <input type="submit" value="Generate Audio">
     </form>
+
+    <audio id="audio-player" controls style="display:none;"></audio>
+    <a id="download-link" style="display:none;">Download Audio</a>
 
     <script>
         function updateVideoMemory() {
@@ -56,7 +57,60 @@
                 .catch(error => console.error('Error fetching history prompt options:', error));
         }
 
+        function handleAudioResponse(response) {
+            const audioPlayer = document.getElementById('audio-player');
+            const downloadLink = document.getElementById('download-link');
+
+            // Extract the filename from the response headers or use a default name
+            const defaultFilename = `audio_${new Date().getTime()}.wav`;
+
+            // Update the count before fetching the count
+            updateCount();
+
+            fetch('/fetch_count')
+                .then(response => response.json())
+                .then(data => {
+                    const currentCount = data.current_count;
+                    const filename = `audio_${currentCount}.wav`;
+
+                    audioPlayer.src = URL.createObjectURL(response);
+                    audioPlayer.style.display = 'block';
+
+                    downloadLink.href = audioPlayer.src;
+                    downloadLink.download = filename;
+                    downloadLink.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching count:', error));
+        }
+
+        function updateCount() {
+            fetch('/fetch_count')
+                .then(response => response.json())
+                .then(data => {
+                    const countElement = document.getElementById('current-count');
+                    countElement.innerText = `Current Count: ${data.current_count}`;
+                })
+                .catch(error => console.error('Error fetching count:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                fetch('/generate_audio', {
+                    method: 'POST',
+                    body: new FormData(form),
+                })
+                .then(response => response.blob())
+                .then(handleAudioResponse)
+                .catch(error => console.error('Error fetching audio:', error));
+            });
+        });
+
         // Call the functions on page load
+        updateCount()
         updateVideoMemory();
         updateHistoryPromptOptions();
     </script>
