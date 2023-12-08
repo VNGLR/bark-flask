@@ -36,7 +36,7 @@ bash
 
     python app.py --debug
 
-Usage
+## Usage
 
     Run the Flask application:
 
@@ -104,10 +104,6 @@ These enhancements are controlled by command-line arguments:
 - `-c` or `--cache`: Enables MD5 hash caching.
 
 To run the Flask application with caching enabled, use the following command:
-
-```bash
-python app.py -c
-    static/: Folder containing static assets (CSS file).
 
 Customization
 
