@@ -10,13 +10,7 @@ This Flask web application converts text to audio using the [Bark](https://githu
 
 ## Installation
 
-NOTE
-
-iNSTALLATION REQUIREMENTS AND PRELOAD NOT DONE... MAYBE DONE SOMEDAY
-Install flash and bark and it should work
-recommend installing cuda for GPU use, CPU use is very slow, GPU is almost realtime.
-Note will have issues on sentences longer then ~ 14 seconds, will impliment later
-NOTE
+**Note: The installation requirements and preloading have been updated.**
 
 1. Clone the repository:
 
@@ -34,7 +28,13 @@ Download and preload Bark models:
 
 bash
 
-    python preload_models.py
+python preload_models.py
+
+Note: If you want to run the application in debug mode without preloading models, use the --debug flag when starting the Flask application:
+
+bash
+
+    python app.py --debug
 
 Usage
 
@@ -44,15 +44,15 @@ Usage
 
     python app.py
 
+    If preloading models is skipped, Bark models will be loaded dynamically when generating audio.
+
     Open your web browser and navigate to http://127.0.0.1:5000/.
 
     Enter text in the provided form and click "Generate Audio."
 
     The generated audio will be available for download.
 
-Project Structure
-
-arduino
+## Project Structure
 
 project_folder/
 │
@@ -61,12 +61,52 @@ project_folder/
 ├── templates/
 │   └── index.html
 │
-└── static/
-    └── style.css
+├── static/
+│   └── style.css
+│
+├── count.txt
+└── text_and_hash.txt
 
-    app.py: Main Flask application file.
-    preload_models.py: Script to download and preload Bark models.
-    templates/: Folder containing HTML templates.
+- **app.py:** Main Flask application file.
+- **preload_models.py:** Script to download and preload Bark models.
+- **templates/:** Folder containing HTML templates.
+- **static/:** Folder containing static assets (CSS file).
+- **count.txt:** Text file storing the count of audio files generated.
+- **text_and_hash.txt:** Text file maintaining a hash table of submitted text and their MD5 hashes.
+
+### Cache and Hash Tables
+
+The Flask application (`app.py`) now includes additional functionality related to caching and hash tables. The new features allow the application to:
+
+- Cache generated audio files to improve performance and reduce redundant computations (referenced in `count.txt`).
+- Maintain a hash table (`text_and_hash.txt`) that logs each submitted text and its corresponding MD5 hash.
+--Example table, what your text_and_hash.txt should look like, ish:
+
+Example Text 1 - c4ca4238a0b923820dcc509a6f75849b
+Lorem Ipsum - d0c7f4e19d02f95dd1bf4df2ec94b907
+User Submission - a5bfc9e07964f8dddeb95fc584cd965d
+Another Example - 3bf111da8560a8a95739049377efcdfb
+
+or
+test again - a9dce44980071bf4b02dab73e103d779
+test again - 10f671ccd4043a2d637012c4cabdd181
+test again - 2fa8956b6af61be0a96b270a41a80a16
+test again - 89641456e22b4f0b623973dcbf95ba31
+test again - 02fdffde1c7daa3d939443e91165e9ff
+test again - ebe3831415dd95cedeb186a07a4d968f
+test again - 86074c5a71127398e7a6d9cfbe178fbf
+test again - 5bea173b48ca3b4a00e97554ded78a30
+
+
+
+These enhancements are controlled by command-line arguments:
+
+- `-c` or `--cache`: Enables MD5 hash caching.
+
+To run the Flask application with caching enabled, use the following command:
+
+```bash
+python app.py -c
     static/: Folder containing static assets (CSS file).
 
 Customization
@@ -75,7 +115,4 @@ Customization
     Extend functionality by adding more routes and features in the app.py file.
 
 
-
-
-
-This version provides links for installing Bark and Flask, making it more straightforward for users to access the necessary resources.
+Feel free to adjust the content based on your specific project details and preferences.
