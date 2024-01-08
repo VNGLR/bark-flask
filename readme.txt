@@ -7,6 +7,14 @@ This Flask web application converts text to audio using the [Bark](https://githu
 - [Python 3.6 or higher](https://www.python.org/)
 - [Flask](https://palletsprojects.com/p/flask/)
 - [Bark](https://github.com/suno-ai/bark) (Ensure you have the necessary Bark models)
+    "Bark has been tested and works on both CPU and GPU (pytorch 2.0+, CUDA 11.7 and CUDA 12.0).
+
+On enterprise GPUs and PyTorch nightly, Bark can generate audio in roughly real-time. On older GPUs, default colab, or CPU, inference time might be significantly slower. For older GPUs or CPU you might want to consider using smaller models. Details can be found in out tutorial sections here.
+
+The full version of Bark requires around 12GB of VRAM to hold everything on GPU at the same time. To use a smaller version of the models, which should fit into 8GB VRAM, set the environment flag SUNO_USE_SMALL_MODELS=True."
+
+Note, do to several functions designed to help debug the GPU, likely program will currently crash if not ran on NVIDIA gpu, as such there is the below requirement. That being said, working on new branch which will not require NVIDIA GPU and can be ran on CPU.
+
 - NVIDIA GPU with 8+ GBs of video memory (development done on 3080 ti)
 
 ## Installation
