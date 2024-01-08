@@ -7,7 +7,7 @@ This Flask web application converts text to audio using the [Bark](https://githu
 - [Python 3.6 or higher](https://www.python.org/)
 - [Flask](https://palletsprojects.com/p/flask/)
 - [Bark](https://github.com/suno-ai/bark) (Ensure you have the necessary Bark models)
-    "Bark has been tested and works on both CPU and GPU (pytorch 2.0+, CUDA 11.7 and CUDA 12.0).
+"Bark has been tested and works on both CPU and GPU (pytorch 2.0+, CUDA 11.7 and CUDA 12.0).
 
 On enterprise GPUs and PyTorch nightly, Bark can generate audio in roughly real-time. On older GPUs, default colab, or CPU, inference time might be significantly slower. For older GPUs or CPU you might want to consider using smaller models. Details can be found in out tutorial sections here.
 
