@@ -12,9 +12,33 @@ def get_video_memory():
     try:
         import GPUtil
         gpu = GPUtil.getGPUs()[0]
+        #print(gpu.)
         return f"{gpu.memoryFree} MB free out of {gpu.memoryTotal} MB total"
     except ImportError:
         return "GPUtil module not found. Please install it to get GPU information."
+
+def get_gpu_stats():
+    try:
+        import GPUtil
+
+        # Get the first GPU
+        gpu = GPUtil.getGPUs()[0]
+
+        # Print detailed GPU information
+        print("GPU Information:")
+        print(f"ID: {gpu.id}")
+        print(f"Name: {gpu.name}")
+        print(f"UUID: {gpu.uuid}")
+        print(f"Driver: {gpu.driver}")
+        print(f"Memory Free: {gpu.memoryFree} MB")
+        print(f"Memory Used: {gpu.memoryUsed} MB")
+        print(f"Memory Total: {gpu.memoryTotal} MB")
+        print(f"Load: {gpu.load * 100}%")
+
+        return f"{gpu.memoryFree} MB free out of {gpu.memoryTotal} MB total"
+    except ImportError:
+        return "GPUtil module not found. Please install it to get GPU information."
+
 
 def get_last_count():
     try:
@@ -57,6 +81,8 @@ if not args.debug:
 last_count = get_last_count()
 print(f"Last count: {last_count}")
 
+get_gpu_stats()
+
 @app.route('/')
 def index():
     print(get_video_memory())
@@ -80,6 +106,8 @@ def generate_audio_endpoint():
     
     #defaults to v2/en_speaker_9, otherwise reads from selected in get_history_prompt_options
     speaker = request.form.get('history_prompt', 'v2/en_speaker_9')
+
+
 
     # Debugging video memory before generating audio
     print(get_video_memory())
