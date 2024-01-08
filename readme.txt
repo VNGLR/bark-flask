@@ -7,10 +7,12 @@ This Flask web application converts text to audio using the [Bark](https://githu
 - [Python 3.6 or higher](https://www.python.org/)
 - [Flask](https://palletsprojects.com/p/flask/)
 - [Bark](https://github.com/suno-ai/bark) (Ensure you have the necessary Bark models)
+- NVIDIA GPU with 8+ GBs of video memory (development done on 3080 ti)
 
 ## Installation
 
 **Note: The installation requirements and preloading have been updated.**
+
 
 1. Clone the repository:
 
