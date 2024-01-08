@@ -8,6 +8,28 @@ import hashlib
 
 app = Flask(__name__)
 
+try:
+    import GPUtil
+    gpu_available = len(GPUtil.getGPUs()) > 0
+except ImportError:
+    gpu_available = False
+
+if gpu_available:
+    print("NVIDIA GPU(s) detected.")
+else:
+    print("No NVIDIA GPU detected. GPU-related functions will be disabled.")
+
+def get_video_memory():
+    if not gpu_available:
+        return "NVIDIA GPU not available. GPU information not accessible."
+    
+    try:
+        gpu = GPUtil.getGPUs()[0]
+        return f"{gpu.memoryFree} MB free out of {gpu.memoryTotal} MB total"
+    except ImportError:
+        return "GPUtil module not found. Please install it to get GPU information."
+
+
 def get_video_memory():
     try:
         import GPUtil
